@@ -17,7 +17,7 @@ function CreateTask() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "team-task-manager-production-b778.up.railway.app",
+        "http://team-task-manager-production-b778.up.railway.app/api/tasks",
         { title, description, assignedTo },
         {
           headers: { Authorization: `Bearer ${token}` },
