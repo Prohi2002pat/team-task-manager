@@ -1,12 +1,12 @@
 import { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import "../App.css";
 
 function CreateTask() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
-  const [message, setMessage] = useState(""); // ✅ NEW
+  const [message, setMessage] = useState("");
 
   const role = localStorage.getItem("role");
 
@@ -16,8 +16,8 @@ function CreateTask() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        "http://team-task-manager-production-b778.up.railway.app/api/tasks",
+      await API.post(
+        "/tasks",
         { title, description, assignedTo },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -26,7 +26,6 @@ function CreateTask() {
 
       setMessage("Task created successfully ✅");
 
-      // reset fields
       setTitle("");
       setDescription("");
       setAssignedTo("");
@@ -43,10 +42,7 @@ function CreateTask() {
       <div className="card">
         <h2>Create Task</h2>
 
-        {/* ✅ MESSAGE */}
-        {message && (
-          <p style={{ color: "green" }}>{message}</p>
-        )}
+        {message && <p style={{ color: "green" }}>{message}</p>}
 
         <form onSubmit={handleSubmit}>
           <input
