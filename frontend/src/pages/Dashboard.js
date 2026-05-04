@@ -63,7 +63,7 @@ function Dashboard() {
       const token = localStorage.getItem("token");
 
       await axios.delete(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `http://team-task-manager-production-b778.up.railway.app/api/tasks/${taskId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
