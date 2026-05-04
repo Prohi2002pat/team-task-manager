@@ -16,8 +16,8 @@ function Dashboard() {
 
         const url =
           role === "Admin"
-            ? "team-task-manager-production-b778.up.railway.app/api/tasks"
-            : "team-task-manager-production-b778.up.railway.app/api/tasks/my";
+            ? "https://team-task-manager-production-b778.up.railway.app/api/tasks"
+            : "https://team-task-manager-production-b778.up.railway.app/api/tasks/my";
 
         const res = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` },
@@ -40,7 +40,7 @@ function Dashboard() {
       const token = localStorage.getItem("token");
 
       await axios.patch(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `http://team-task-manager-production-b778.up.railway.app/api/tasks/${taskId}`,
         { status: "Completed" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
