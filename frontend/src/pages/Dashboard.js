@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import "../App.css";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);   // ✅ NEW
-  const [message, setMessage] = useState("");     // ✅ NEW
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   const role = localStorage.getItem("role");
 
@@ -14,20 +14,18 @@ function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        const url =
-          role === "Admin"
-            ? "https://team-task-manager-production-b778.up.railway.app/api/tasks"
-            : "https://team-task-manager-production-b778.up.railway.app/api/tasks/my";
+        const url = role === "Admin" ? "/tasks" : "/tasks/my";
 
-        const res = await axios.get(url, {
+        const res = await API.get(url, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         setTasks(res.data);
       } catch (error) {
         console.log(error.response?.data || error.message);
+        setMessage("Error loading tasks ❌");
       } finally {
-        setLoading(false); // ✅ stop loading
+        setLoading(false);
       }
     };
 
@@ -39,13 +37,14 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.patch(
-        `http://team-task-manager-production-b778.up.railway.app/api/tasks/${taskId}`,
+      await API.patch(
+        `/tasks/${taskId}`,
         { status: "Completed" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setMessage("Task marked as completed ✅");
+
       setTasks((prev) =>
         prev.map((t) =>
           t._id === taskId ? { ...t, status: "Completed" } : t
@@ -62,12 +61,12 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(
-        `http://team-task-manager-production-b778.up.railway.app/api/tasks/${taskId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await API.delete(`/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setMessage("Task deleted successfully 🗑️");
+
       setTasks((prev) => prev.filter((t) => t._id !== taskId));
 
     } catch (err) {
@@ -80,7 +79,6 @@ function Dashboard() {
     window.location.reload();
   };
 
-  // 📊 Stats
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((t) => t.status === "Completed").length;
   const pendingTasks = tasks.filter((t) => t.status !== "Completed").length;
@@ -95,14 +93,12 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* ✅ MESSAGE */}
       {message && (
         <p style={{ color: "green", marginTop: "10px" }}>
           {message}
         </p>
       )}
 
-      {/* 📊 STATS */}
       <div className="stats">
         <div className="stat-box">
           <h4>Total</h4>
@@ -122,15 +118,12 @@ function Dashboard() {
 
       <h3>Tasks</h3>
 
-      {/* ✅ LOADING */}
       {loading && <p>Loading tasks...</p>}
 
-      {/* ✅ EMPTY STATE */}
       {!loading && tasks.length === 0 && (
         <p>No tasks available 📭</p>
       )}
 
-      {/* TASK LIST */}
       {!loading &&
         tasks.map((task) => (
           <div className="card" key={task._id}>
@@ -150,7 +143,6 @@ function Dashboard() {
               </span>
             </p>
 
-            {/* MEMBER */}
             {role === "Member" && task.status !== "Completed" && (
               <button
                 className="btn-success"
@@ -161,7 +153,6 @@ function Dashboard() {
               </button>
             )}
 
-            {/* ADMIN */}
             {role === "Admin" && (
               <button
                 className="btn-danger"
